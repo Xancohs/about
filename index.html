@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Page</title>
+    <style>
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        #background-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f4f1;
+        }
+
+        header {
+            background-color: #5c2a2f;
+            color: white;
+            padding: 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        header .container {
+            width: 80%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        section {
+            padding: 40px 20px;
+            clear: both;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        section h2 {
+            color: #5c2a2f;
+            margin-bottom: 20px;
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background for the box */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .story-container {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .story-item {
+            display: none;
+            position: relative;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .story-item.active {
+            display: block;
+        }
+
+        .story {
+            display: flex;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+
+        .story img {
+            width: 150px;
+            height: 150px;
+            margin-right: 20px;
+            border-radius: 50%;
+        }
+
+        .story-text {
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        form input, form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        form button {
+            background-color: #5c2a2f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #4a1e1e;
+        }
+
+        footer {
+            background-color: #5c2a2f;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            clear: both;
+        }
+
+        @keyframes hoverX {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #5c2a2f, #3e1d1a);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .x-spinner {
+            font-size: 80px;
+            color: #f2b5d4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            animation: hoverX 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #f2b5d4;
+            width: 0;
+            transition: width 0.4s ease;
+        }
+
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            z-index: 1001;
+            display: none;
+        }
+
+        .modal-content {
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            header .container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav ul {
+                flex-direction: column;
+                margin-top: 10px;
+            }
+
+            nav ul li {
+                margin: 10px 0;
+            }
+
+            .story img {
+                width: 120px;
+                height: 120px;
+            }
+
+            section {
+                padding: 20px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-background">
+        <video id="background-video" autoplay loop muted>
+            <source src="TEST.mp4" type="video/mp4">
+            <source src="TEST.mp4" type="video/ogg">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <header>
+        <div class="container">
+            <h1>Alumni Association</h1>
+            <nav>
+                <ul>
+                    <li><a href="https://xancohs.github.io/home/">Home</a></li>
+                    <li><a href="#">Alumni Stories</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="box">
+        <div class="container">
+            <h2>About the x-Alumni Association</h2>
+            <p>Connect with your fellow alumni and stay updated on events and news.</p>
+        </div>
+    </section>
+
+    <section id="stories" class="box">
+        <div class="container">
+            <h2>Our Executive Stories</h2>
+            <div class="story-container">
+                <div class="story-item active">
+                    <div class="story">
+                        <img src="RHOF 2.png" alt="Alumni 1">
+                        <div class="story-text">
+                            <h3>HRM OBA ADEWUMI ADENIJI
+                                ONIBUDO EKUN OF IBUDO AYETORO</h3>
+                            <p>The Entire People Of 
+                                Ibudo Ayetoro Kingdom 
+                                On Behalf Of Our Kabiyesi, 
+                                Hrm Oba Adewumi Adeniji, 
+                                The Onibudo Ekun Of Ibudo Ayetoro 
+                                Congratulate Kabiyesi's Alma Mata  
+                                Anglican Comprehensive 
+                                High School, Ipaja. <BR> We congratulate the President 
+                                    of the Old Student Association, 
+                                    Revd Femi Lapite and the entire 
+                                    Executive members 
+                                    and students of our dear school.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="story-item">
+                    <div class="story">
+                        <img src="RHOF 1.png" alt="Alumni 2">
+                        <div class="story-text">
+                            <h3>HRM Oba Kolawole Egundupe, 
+                                Ilufemiloye I, Olu of Ipaja Kingdom </h3>
+                            <p>on behalf of the entire good people of IPAJA 
+                                rejoice with the 
+                                Anglican Comprehensive High School 
+                                Old Students Association 
+                                and the  Management, Students of the School 
+                                on the occasion of your 
+                                Golden Jubilee Anniversary.
+                                
+                                My people are indeed happy and proud 
+                                that the School is located in our 
+                                peaceful environment..</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add more story-items here -->
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="box">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <p>If you have any questions or would like to get in touch, please reach out to us.</p>
+            <form
+            action="https://formspree.io/f/mjkvwdlr"
+            method="POST"
+          >
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required aria-required="true" aria-label="Your name">
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required aria-required="true" aria-label="Your email">
+                
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="4" required aria-required="true" aria-label="Your message"></textarea>
+                
+                <button type="submit">Send Message</button>
+            </form>            
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Alumni Association. All rights reserved.</p>
+    </footer>
+
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="x-spinner">X</div>
+        <div class="loading-text">Loading...</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <p>Thank you for visiting! We hope you enjoy the site.</p>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for background audio
+        const audio = new Audio('assets/background.mp3');
+        audio.volume = 0.6;
+        audio.play().catch(error => console.log("Audio play error:", error));
+
+        // JavaScript for loading overlay and progress bar
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const progressBar = document.getElementById('progress-bar');
+
+        function simulateLoading() {
+            loadingOverlay.style.display = 'flex';
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    loadingOverlay.style.display = 'none';
+                    showModal();
+                } else {
+                    width += 1;
+                    progressBar.style.width = width + '%';
+                }
+            }, 40);
+        }
+
+        function showModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'block';
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', simulateLoading);
+
+        // JavaScript for story slideshow
+        let storyIndex = 0;
+        const stories = document.querySelectorAll('.story-item');
+        function showNextStory() {
+            stories.forEach((story, index) => {
+                story.classList.remove('active');
+                if (index === storyIndex) {
+                    story.classList.add('active');
+                }
+            });
+            storyIndex = (storyIndex + 1) % stories.length;
+        }
+        setInterval(showNextStory, 4000);
+    </script>
+</body>
+</html>
